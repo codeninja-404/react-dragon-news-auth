@@ -16,14 +16,18 @@ const auth = getAuth(app);
 
 const AtuhProvider = ({ children }) => {
   const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   const createUser = (email, password) => {
+    setLoading(true);
     return createUserWithEmailAndPassword(auth, email, password);
   };
   const logOut = () => {
+    setLoading(true);
     return signOut(auth);
   };
   const signInUser = (email, password) => {
+    setLoading(true);
     return signInWithEmailAndPassword(auth, email, password);
   };
 
@@ -31,13 +35,14 @@ const AtuhProvider = ({ children }) => {
     const unSubscribe = onAuthStateChanged(auth, (currentUser) => {
       console.log("current user is", currentUser);
       setUser(currentUser);
+      setLoading(false);
     });
     return () => {
       unSubscribe();
     };
   }, []);
 
-  const authInfo = { user, createUser, logOut,signInUser };
+  const authInfo = { user, createUser, logOut, signInUser,loading};
   return (
     <AuthContext.Provider value={authInfo}>{children}</AuthContext.Provider>
   );
